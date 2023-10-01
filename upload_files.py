@@ -2,7 +2,8 @@ import os
 import zipfile
 from telegram.constants import ParseMode
 from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler
+from telegram.ext import filters
 import telegram
 # Replace with your own API credentials
 API_TOKEN = '5502855202:AAGW3MYUov5Gb2wWgpcaNTgxDjZ98IFh4P8'
