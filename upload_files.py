@@ -51,8 +51,8 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(MessageHandler(Filters.document, zip_file))
    # Only allow owner to use commands in groups (optional)
-   dp.add_handler(CommandHandler("start", start, filters=Filters.chat(OWNER_ID)))
-   dp.add_handler(MessageHandler(Filters.document & Filters.chat(OWNER_ID), zip_file))
+dp.add_handler(CommandHandler("start", start, filters=Filters.chat(OWNER_ID)))
+dp.add_handler(MessageHandler(Filters.document & Filters.chat(OWNER_ID), zip_file))
 
    updater.start_polling()
    updater.idle()
