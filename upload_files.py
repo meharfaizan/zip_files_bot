@@ -44,9 +44,9 @@ if not update.message.document:
 def main():
   """Start the bot."""
   updater = Updater(API_TOKEN)
-  
- global dp
- dp = updater.dispatcher
+  
+ global dp
+ dp = updater.dispatcher
   
  dp.add_handler(CommandHandler("start", start))
  dp.add_handler(MessageHandler(Filters.document, zip_file))
