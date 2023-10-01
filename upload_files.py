@@ -29,14 +29,14 @@ if not update.message.document:
   file_path = context.bot.get_file(file_id).download()
 
  # Create a ZIP archive with or without password protection
- password_protected = False # Change to True if you want password protection
- zip_file_path = os.path.join(os.getcwd(), f'{file_name}.zip')
+  password_protected = False # Change to True if you want password protection
+  zip_file_path = os.path.join(os.getcwd(), f'{file_name}.zip')
   
- with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zf:
-   if password_protected:
-     zf.setpassword(b'your_password') # Replace 'your_password' with your desired password
+  with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+    if password_protected:
+      zf.setpassword(b'your_password') # Replace 'your_password' with your desired password
      
-     zf.write(file_path, arcname=file_name)
+      zf.write(file_path, arcname=file_name)
 
  # Send the ZIP archive back to the user
  context.bot.send_document(chat_id=update.effective_chat.id,
