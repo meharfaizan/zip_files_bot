@@ -39,9 +39,8 @@ if not update.message.document:
       
 # Send the ZIP archive back to the user
   context.bot.send_document(chat_id=update.effective_chat.id,
-        document=open(zip_file_path, 'rb'),
-        filename=f'{file_name}.zip')
-
+        document=open(zip_file_path, 'rb'),
+        filename=f'{file_name}.zip')
 def main():
  """Start the bot."""
  updater = Updater(API_TOKEN)
