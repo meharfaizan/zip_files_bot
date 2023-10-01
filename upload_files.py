@@ -16,8 +16,8 @@ def start(update: Update, context):
   update.message.reply_text('Hi! Send me any file and I will zip it for you.')
 
 def zip_file(update: Update, context):
- """Zip the file sent by the user and send it back."""
- # Check if a file was sent by the user
+  "Zip the file sent by the user and send it back."
+  # Check if a file was sent by the user
  if not update.message.document:
   update.message.reply_text('Please send a file.')
   return
