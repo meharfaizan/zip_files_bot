@@ -12,8 +12,6 @@ from garnet.storages import DictStorage
 from garnet.events import Router
 
 router = Router()
-
-
 class States(group.Group):
   state_waiting = group.M()
   state_uploading = group.M()
