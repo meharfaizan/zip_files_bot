@@ -42,8 +42,8 @@ if not update.message.document:
         document=open(zip_file_path, 'rb'),
         filename=f'{file_name}.zip')
 def main():
- """Start the bot."""
- updater = Updater(API_TOKEN)
+  """Start the bot."""
+  updater = Updater(API_TOKEN)
   
  global dp
  dp = updater.dispatcher
