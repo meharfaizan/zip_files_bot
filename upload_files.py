@@ -31,7 +31,6 @@ if not update.message.document:
  # Create a ZIP archive with or without password protection
   password_protected = False # Change to True if you want password protection
   zip_file_path = os.path.join(os.getcwd(), f'{file_name}.zip')
-  
   with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zf:
     if password_protected:
       zf.setpassword(b'your_password') # Replace 'your_password' with your desired password
