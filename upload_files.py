@@ -26,7 +26,7 @@ if not update.message.document:
   file_name = update.message.document.file_name
 
  # Download the file to local storage
- file_path = context.bot.get_file(file_id).download()
+  file_path = context.bot.get_file(file_id).download()
 
  # Create a ZIP archive with or without password protection
  password_protected = False # Change to True if you want password protection
