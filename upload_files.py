@@ -1,93 +1,63 @@
-import tempfile
-from os.path import basename
-from zipfile import ZipFile
-import configparser
 import os
+import zipfile
+from telegram import Update, ParseMode
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-from garnet import ctx
-from garnet.runner import RuntimeConfig
-from garnet.runner import run
-from garnet.filters import text, State, group
-from garnet.storages import DictStorage
-from garnet.events import Router
+# Replace with your own API credentials
+API_TOKEN = '5502855202:AAGW3MYUov5Gb2wWgpcaNTgxDjZ98IFh4P8'
+API_ID = '6534707'
+API_HASH = '4bcc61d959a9f403b2f20149cbbe627a'
+OWNER_ID = '1430593323'
 
-router = Router()
-class States(group.Group):
-  state_waiting = group.M()
-  state_uploading = group.M()
-  state_naming = group.M()
+def start(update: Update, context):
+    """Send a welcome message when the command /start is issued."""
+    update.message.reply_text('Hi! Send me any file and I will zip it for you.')
 
+def zip_file(update: Update, context):
+    """Zip the file sent by the user and send it back."""
+    # Check if a file was sent by the user
+    if not update.message.document:
+        update.message.reply_text('Please send a file.')
+        return
 
-@router.use()
-async def only_pm(handler, event):
-  if event.is_private:
-    try:
-      return await handler(event)
-    except Exception as e:
-      print("Error happened", e)
-      await event.reply(f"An error happened please retry:\nerror code : {e}")
-      fsm = ctx.CageCtx.get() # get UserCage of current user
-      await fsm.set_state(States.state_waiting)
-      await fsm.set_data({"files": []})
+    # Get the file details
+    file_id = update.message.document.file_id
+    file_name = update.message.document.file_name
 
+    # Download the file to local storage
+    file_path = context.bot.get_file(file_id).download()
 
-@router.message(text.commands("start", prefixes="/") & (State.exact(States.state_waiting) | State.entry))
-async def response(event):
-  await event.reply("Hi! Send me a lot of files to zip.\nDo /done to finally zip them and send them back,")
-  fsm = ctx.CageCtx.get() # get UserCage of current user
+    # Create a ZIP archive with or without password protection
+    password_protected = False  # Change to True if you want password protection
+    zip_file_path = os.path.join(os.getcwd(), f'{file_name}.zip')
+    
+    with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+        if password_protected:
+            zf.setpassword(b'your_password')  # Replace 'your_password' with your desired password
+            
+        zf.write(file_path, arcname=file_name)
 
-  await fsm.set_state(States.state_uploading)
-  await fsm.set_data({"files": []})
+    # Send the ZIP archive back to the user
+    context.bot.send_document(chat_id=update.effective_chat.id,
+                              document=open(zip_file_path, 'rb'),
+                              filename=f'{file_name}.zip')
 
+def main():
+    """Start the bot."""
+    updater = Updater(API_TOKEN)
+    
+    dp = updater.dispatcher
+    
+    dp.add_handler(CommandHandler("start", start))
+    
+    dp.add_handler(MessageHandler(Filters.document, zip_file))
 
-@router.message(State.exact(States.state_waiting) | State.entry)
-async def response(event):
-  await event.reply("Send /start to start")
+   # Only allow owner to use commands in groups (optional)
+   dp.add_handler(CommandHandler("start", start, filters=Filters.chat(OWNER_ID)))
+   dp.add_handler(MessageHandler(Filters.document & Filters.chat(OWNER_ID), zip_file))
 
+   updater.start_polling()
+   updater.idle()
 
-@router.message(text.commands("done", prefixes="/") & State.exact(States.state_uploading))
-async def finished(event):
-  fsm = ctx.CageCtx.get() # get UserCage of current user
-  await fsm.set_state(States.state_naming)
-  await event.reply("Please Choose a name for the ZIP file. (no extensions)")
-
-
-@router.message(State.exact(States.state_naming))
-async def naming(event):
-  fsm = ctx.CageCtx.get() # get UserCage of current user
-  await fsm.set_state(States.state_waiting)
-  data = await fsm.get_data()
-  files = data['files']
-
-  msg = await event.reply("Downloading...")
-  with tempfile.TemporaryDirectory() as tmp_dirname:
-    with ZipFile(f'{tmp_dirname}/{event.text}.zip', 'w') as zipObj2:
-      for file in files:
-        path = await event.client.download_media(file, file=tmp_dirname)
-        zipObj2.write(path, basename(path))
-    await msg.edit(f"Finished uploading {len(files)} files. Uploading zip file..")
-    await event.reply(file=f'{tmp_dirname}/{event.text}.zip')
-  await fsm.set_data({"files": []})
-
-
-@router.message(State.exact(States.state_uploading))
-async def uploading(event):
-  if event.file:
-    fsm = ctx.CageCtx.get() # get UserCage of current user
-    data = await fsm.get_data()
-    files = data['files']
-    files.append(event.message.media)
-    await fsm.set_data(data)
-    await event.reply(f"Saved {len(files)} so far!")
-
-  else:
-    await event.reply("Please send a file or /done to finish")
-
-
-def default_conf_maker() -> RuntimeConfig:
-  i = int(os.environ.get("API_ID", 12345))
-  a = os.environ.get('API_HASH')
-  b = os.environ.get('BOT_TOKEN')
-  s = os.environ.get('SESSION_NAME')
-  return RuntimeConfig(
-    bot_token
+if __name__ == '__main__':
+   main()
