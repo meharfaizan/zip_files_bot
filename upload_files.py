@@ -12,8 +12,8 @@ API_HASH = '4bcc61d959a9f403b2f20149cbbe627a'
 OWNER_ID = '1430593323'
 
 def start(update: Update, context):
- """Send a welcome message when the command /start is issued."""
- update.message.reply_text('Hi! Send me any file and I will zip it for you.')
+  "Send a welcome message when the command /start is issued."
+  update.message.reply_text('Hi! Send me any file and I will zip it for you.')
 
 def zip_file(update: Update, context):
  """Zip the file sent by the user and send it back."""
