@@ -21,23 +21,22 @@ def zip_file(update: Update, context):
 if not update.message.document:
   update.message.reply_text('Please send a file.')
   return
+  # Get the file details
+ file_id = update.message.document.file_id
+ file_name = update.message.document.file_name
 
- # Get the file details
- file_id = update.message.document.file_id
- file_name = update.message.document.file_name
+ # Download the file to local storage
+ file_path = context.bot.get_file(file_id).download()
 
- # Download the file to local storage
- file_path = context.bot.get_file(file_id).download()
-
- # Create a ZIP archive with or without password protection
- password_protected = False # Change to True if you want password protection
- zip_file_path = os.path.join(os.getcwd(), f'{file_name}.zip')
+ # Create a ZIP archive with or without password protection
+ password_protected = False # Change to True if you want password protection
+ zip_file_path = os.path.join(os.getcwd(), f'{file_name}.zip')
   
- with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zf:
-  if password_protected:
-   zf.setpassword(b'your_password') # Replace 'your_password' with your desired password
-    
-  zf.write(file_path, arcname=file_name)
+ with zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+   if password_protected:
+     zf.setpassword(b'your_password') # Replace 'your_password' with your desired password
+     
+     zf.write(file_path, arcname=file_name)
 
  # Send the ZIP archive back to the user
  context.bot.send_document(chat_id=update.effective_chat.id,
