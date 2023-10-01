@@ -22,8 +22,8 @@ if not update.message.document:
   update.message.reply_text('Please send a file.')
   return
   # Get the file details
-file_id = update.message.document.file_id
-file_name = update.message.document.file_name
+  file_id = update.message.document.file_id
+  file_name = update.message.document.file_name
 
  # Download the file to local storage
  file_path = context.bot.get_file(file_id).download()
