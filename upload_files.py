@@ -1,6 +1,7 @@
 import os
 import zipfile
-from telegram import Update, parse_mode
+from telegram.constants import ParseMode
+from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import telegram
 # Replace with your own API credentials
