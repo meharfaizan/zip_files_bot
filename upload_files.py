@@ -47,8 +47,8 @@ def main():
   
   global dp
   dp = updater.dispatcher
-  
- dp.add_handler(CommandHandler("start", start))
+  
+ dp.add_handler(CommandHandler("start", start))
  dp.add_handler(MessageHandler(Filters.document, zip_file))
  # Only allow owner to use commands in groups (optional)
  dp.add_handler(CommandHandler("start", start, filters=Filters.chat(OWNER_ID)))
